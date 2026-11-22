@@ -87,15 +87,21 @@ jobs:
           lunch "${{ inputs.lunch_target }}"
           mka -j$(nproc) "${{ inputs.build_target }}"
 
-      - name: Collect Output Files
+    - name: Collect Output Files
         run: |
           mkdir -p "$GITHUB_WORKSPACE/out_artifacts"
-          OUT_DIR="$HOME/fox_src/out/target/product/A67L_Gen2"
-          cp -v "$OUT_DIR"/OrangeFox-*.zip "$GITHUB_WORKSPACE/out_artifacts/" || true
-          cp -v "$OUT_DIR"/OrangeFox-*.img "$GITHUB_WORKSPACE/out_artifacts/" || true
-          cp -v "$OUT_DIR"/recovery.img "$GITHUB_WORKSPACE/out_artifacts/" || true
-          cp -v "$OUT_DIR"/boot.img "$GITHUB_WORKSPACE/out_artifacts/" || true
-          cp -v "$OUT_DIR"/vendor_boot.img "$GITHUB_WORKSPACE/out_artifacts/" || true
+          echo "=== Product directories ==="
+          ls -la "$HOME/fox_src/out/target/product/"
+
+          OUT_DIR=$(find "$HOME/fox_src/out/target/product" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+          echo "=== Contents of $OUT_DIR ==="
+          ls -lh "$OUT_DIR"
+
+          for f in OrangeFox-*.zip OrangeFox-*.img recovery.img boot.img vendor_boot.img; do
+            cp -v "$OUT_DIR"/$f "$GITHUB_WORKSPACE/out_artifacts/" 2>/dev/null || true
+          done
+
+          echo "=== Collected artifacts ==="
           ls -lh "$GITHUB_WORKSPACE/out_artifacts"
 
       - name: Upload Build Artifacts
