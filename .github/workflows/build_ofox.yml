@@ -83,8 +83,8 @@ jobs:
           export FOX_BUILD_DEVICE="A67L_Gen2"
           set +e
           source build/envsetup.sh
-          lunch "${{ inputs.lunch_target }}"
           set -e
+          lunch "${{ inputs.lunch_target }}"
           mka -j$(nproc) "${{ inputs.build_target }}"
 
       - name: Collect Output Files
