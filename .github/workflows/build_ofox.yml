@@ -87,7 +87,7 @@ jobs:
           lunch "${{ inputs.lunch_target }}"
           mka -j$(nproc) "${{ inputs.build_target }}"
 
-    - name: Collect Output Files
+      - name: Collect Output Files
         run: |
           mkdir -p "$GITHUB_WORKSPACE/out_artifacts"
           echo "=== Product directories ==="
