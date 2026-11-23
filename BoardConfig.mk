@@ -27,10 +27,12 @@ AB_OTA_PARTITIONS += \
     dtbo \
     vbmeta_system
 
-# Vendor Boot Recovery (GKI / header v4, single vendor_ramdisk00)
+# Vendor Boot Recovery (GKI / header v4)
+TARGET_NO_RECOVERY := true
 BOARD_USES_RECOVERY_AS_BOOT :=
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT := true
+BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT := true
 BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT := true
 
 # Architecture
@@ -66,7 +68,7 @@ TARGET_SCREEN_DENSITY := 320
 BOARD_BOOT_HEADER_VERSION := 4
 BOARD_BOOTIMG_HEADER_VERSION := 4
 BOARD_KERNEL_BASE := 0x00000000
-BOARD_KERNEL_CMDLINE := console=ttyS1,115200n8 bootconfig
+BOARD_KERNEL_CMDLINE := console=ttyS1,115200n8
 BOARD_BOOTCONFIG += \
     androidboot.hardware=s9863a1h10_go \
     androidboot.boot_devices=soc/soc:ap-ahb/20600000.sdio
