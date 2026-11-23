@@ -27,10 +27,11 @@ AB_OTA_PARTITIONS += \
     dtbo \
     vbmeta_system
 
-# Vendor Boot Recovery
+# Vendor Boot Recovery (GKI / header v4, single vendor_ramdisk00)
+BOARD_USES_RECOVERY_AS_BOOT :=
+BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT := true
-FOX_AB_DEVICE := 1
-FOX_VENDOR_BOOT_RECOVERY := 1
+BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT := true
 
 # Architecture
 TARGET_ARCH := arm64
