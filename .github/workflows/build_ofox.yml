@@ -19,7 +19,7 @@ on:
       build_target:
         description: "Make target (recoveryimage, bootimage, or vendorbootimage)"
         required: true
-        default: "recoveryimage"
+        default: "vendorbootimage"
         type: choice
         options:
           - "recoveryimage"
@@ -81,12 +81,18 @@ jobs:
           export ALLOW_MISSING_DEPENDENCIES=true
           export LC_ALL="C"
           export FOX_BUILD_DEVICE="A67L_Gen2"
+          export FOX_AB_DEVICE=1
+          export FOX_VENDOR_BOOT_RECOVERY=1
           set +e
           source build/envsetup.sh
           set -e
           lunch "${{ inputs.lunch_target }}"
-          mka -j$(nproc) "${{ inputs.build_target }}"
-
+          mka -j$(nproc) "${{ inputs.build_target }}"if [ "${{ inputs.build_target }}" = "vendorbootimage" ]; then
+            mka -j$(nproc) adbd vendorbootimage
+          else
+            mka -j$(nproc) "${{ inputs.build_target }}"
+          fi
+          
       - name: Collect Output Files
         run: |
           mkdir -p "$GITHUB_WORKSPACE/out_artifacts"
@@ -104,6 +110,14 @@ jobs:
           echo "=== Collected artifacts ==="
           ls -lh "$GITHUB_WORKSPACE/out_artifacts"
 
+          if [ -f "$GITHUB_WORKSPACE/out_artifacts/vendor_boot.img" ]; then
+            SIZE=$(stat -c%s "$GITHUB_WORKSPACE/out_artifacts/vendor_boot.img")
+            echo "vendor_boot.img size: $SIZE bytes"
+            if [ "$SIZE" -lt 10000000 ]; then
+              echo "ERROR: vendor_boot.img is under 10 MB — ramdisk is likely empty!"
+              exit 1
+            fi
+          fi
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
