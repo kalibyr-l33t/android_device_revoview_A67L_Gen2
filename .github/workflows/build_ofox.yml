@@ -87,7 +87,7 @@ jobs:
           source build/envsetup.sh
           set -e
           lunch "${{ inputs.lunch_target }}"
-          mka -j$(nproc) "${{ inputs.build_target }}"if [ "${{ inputs.build_target }}" = "vendorbootimage" ]; then
+          if [ "${{ inputs.build_target }}" = "vendorbootimage" ]; then
             mka -j$(nproc) adbd vendorbootimage
           else
             mka -j$(nproc) "${{ inputs.build_target }}"
