@@ -111,13 +111,17 @@ jobs:
           ls -lh "$GITHUB_WORKSPACE/out_artifacts"
 
           if [ -f "$GITHUB_WORKSPACE/out_artifacts/vendor_boot.img" ]; then
-            SIZE=$(stat -c%s "$GITHUB_WORKSPACE/out_artifacts/vendor_boot.img")
-            echo "vendor_boot.img size: $SIZE bytes"
-            if [ "$SIZE" -lt 10000000 ]; then
-              echo "ERROR: vendor_boot.img is under 10 MB — ramdisk is likely empty!"
+            UNPACK_OUT=$("$HOME/fox_src/out/host/linux-x86/bin/unpack_bootimg" \
+              --boot_img "$GITHUB_WORKSPACE/out_artifacts/vendor_boot.img" \
+              --out /tmp/check_vb)
+            echo "$UNPACK_OUT"
+            RAMDISK_SIZE=$(echo "$UNPACK_OUT" | awk '/vendor ramdisk total size:/ {print $5}')
+            if [ -z "$RAMDISK_SIZE" ] || [ "$RAMDISK_SIZE" -lt 1000000 ]; then
+              echo "ERROR: vendor ramdisk total size is only ${RAMDISK_SIZE:-0} bytes!"
               exit 1
             fi
           fi
+          
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
