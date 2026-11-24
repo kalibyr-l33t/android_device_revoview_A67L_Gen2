@@ -92,7 +92,7 @@ jobs:
           else
             mka -j$(nproc) "${{ inputs.build_target }}"
           fi
-          
+
       - name: Collect Output Files
         run: |
           mkdir -p "$GITHUB_WORKSPACE/out_artifacts"
@@ -111,7 +111,7 @@ jobs:
           ls -lh "$GITHUB_WORKSPACE/out_artifacts"
 
           if [ -f "$GITHUB_WORKSPACE/out_artifacts/vendor_boot.img" ]; then
-            UNPACK_OUT=$("$HOME/fox_src/out/host/linux-x86/bin/unpack_bootimg" \
+            UNPACK_OUT=$(python3 "$HOME/fox_src/system/tools/mkbootimg/unpack_bootimg.py" \
               --boot_img "$GITHUB_WORKSPACE/out_artifacts/vendor_boot.img" \
               --out /tmp/check_vb)
             echo "$UNPACK_OUT"
@@ -121,7 +121,7 @@ jobs:
               exit 1
             fi
           fi
-          
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
